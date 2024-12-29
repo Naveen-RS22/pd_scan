@@ -13,94 +13,173 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../utilities/colors.dart'; // Assuming your custom colors are defined here
 
-class ScanScreen extends StatefulWidget {
-  final String userId;
-  final String userName;
-
-  const ScanScreen({Key? key, required this.userId, required this.userName})
-      : super(key: key);
+class RepostScreen extends StatefulWidget {
+  const RepostScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<ScanScreen> createState() => _ScanScreenState();
+  State<RepostScreen> createState() => _RepostScreenState();
 }
 
-class _ScanScreenState extends State<ScanScreen> {
+class _RepostScreenState extends State<RepostScreen> {
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<ScanScreenViewModel>(context, listen: false);
-    viewModel.onGetInit(widget.userId,widget.userName);
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<ScanScreenViewModel>(context, listen: true);
 
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: QColors.secondary,
-          title: Text('Report'),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     // User Profile and Welcome Text
-          //     Row(
-          //       children: [
-          //         CircleAvatar(
-          //           backgroundColor: Colors.white,
-          //           child: Icon(Icons.person, color: QColors.secondary),
-          //         ),
-          //         const SizedBox(width: 10),
-          //         Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: [
-          //             Text(
-          //               "Welcome",
-          //               style: Theme.of(context)
-          //                   .textTheme
-          //                   .titleLarge!
-          //                   .apply(color: QColors.white),
-          //             ),
-          //             Text(
-          //               widget.userName,
-          //               style: Theme.of(context)
-          //                   .textTheme
-          //                   .subtitle1!
-          //                   .apply(color: QColors.white),
-          //             ),
-          //           ],
-          //         ),
-          //       ],
-          //     ),
-          //     // Actions (e.g., settings icon)
-          //     IconButton(
-          //       icon: const Icon(Icons.logout),
-          //       color: QColors.white,
-          //       onPressed: () {
-          //         Get.offAll(() => const LoginScreen());
-          //         QStorage.clearStorage();
-          //       },
-          //     ),
-          //   ],
-          // ),
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [QColors.primary, QColors.secondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: QColors.secondary,
+        title: Text(
+          'Report',
+          style: Theme.of(context)
+              .textTheme
+              .headlineLarge!
+              .apply(color: QColors.white),
+        ),
+
+        centerTitle: true,
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     // User Profile and Welcome Text
+        //     Row(
+        //       children: [
+        //         CircleAvatar(
+        //           backgroundColor: Colors.white,
+        //           child: Icon(Icons.person, color: QColors.secondary),
+        //         ),
+        //         const SizedBox(width: 10),
+        //         Column(
+        //           crossAxisAlignment: CrossAxisAlignment.start,
+        //           children: [
+        //             Text(
+        //               "Welcome",
+        //               style: Theme.of(context)
+        //                   .textTheme
+        //                   .titleLarge!
+        //                   .apply(color: QColors.white),
+        //             ),
+        //             Text(
+        //               widget.userName,
+        //               style: Theme.of(context)
+        //                   .textTheme
+        //                   .subtitle1!
+        //                   .apply(color: QColors.white),
+        //             ),
+        //           ],
+        //         ),
+        //       ],
+        //     ),
+        //     // Actions (e.g., settings icon)
+        //     IconButton(
+        //       icon: const Icon(Icons.logout),
+        //       color: QColors.white,
+        //       onPressed: () {
+        //         Get.offAll(() => const LoginScreen());
+        //         QStorage.clearStorage();
+        //       },
+        //     ),
+        //   ],
+        // ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(QSizes.defaultSpace),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Department",
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                DropdownButton<String>(
+                  value: viewModel.selecteditem,
+                  hint: const Text("Select Department"),
+                  items: viewModel.items.map((String itemName) {
+                    return DropdownMenuItem<String>(
+                      value: itemName,
+                      child: Text(itemName),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    viewModel.setItems(newValue ?? "");
+                  },
+                  // style: TextStyle(color: QColors.primary),
+                ),
+              ],
+            ),
+           SizedBox(height: QSizes.spaceBtwSections,),
+          if(viewModel.itemsHistoryList.isNotEmpty)
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 4,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Department : ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        viewModel.itemsHistoryList[0]['departmentName'],
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const Divider(height: 20, color: Colors.grey),
+                  Row(
+                    children: [
+                      Text(
+                        "Count : ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        viewModel.itemsHistoryList[0]['count'].toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(QSizes.defaultSpace),
-          child: Column(
-          children: [],
-          ),
+          )
+
+
+          ],
         ),
       ),
     );

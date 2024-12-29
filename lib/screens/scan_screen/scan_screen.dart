@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import '../../utilities/colors.dart'; // Assuming your custom colors are defined here
+import '../../utilities/colors.dart';
+import '../report_screen/report_screen.dart'; // Assuming your custom colors are defined here
 
 class ScanScreen extends StatefulWidget {
   final String userId;
@@ -40,6 +41,8 @@ class _ScanScreenState extends State<ScanScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+        drawerEnableOpenDragGesture: true, // Ensures swipe to open works
+
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: QColors.secondary,
@@ -97,12 +100,14 @@ class _ScanScreenState extends State<ScanScreen> {
           // ),
           leading: IconButton(
             icon: const Icon(Icons.menu),
-            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            onPressed: () {
+              Get.to(() => RepostScreen());
+              viewModel.getitems();
+            },
           ),
         ),
         drawer: Drawer(
           child: ListView(
-
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
