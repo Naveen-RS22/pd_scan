@@ -34,7 +34,7 @@ class _RepostScreenState extends State<RepostScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        // automaticallyImplyLeading: false,
         backgroundColor: QColors.secondary,
         title: Text(
           'Report',
@@ -97,12 +97,12 @@ class _RepostScreenState extends State<RepostScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Department",
+                  "Select Item",
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 DropdownButton<String>(
                   value: viewModel.selecteditem,
-                  hint: const Text("Select Department"),
+                  hint: const Text("Select Item"),
                   items: viewModel.items.map((String itemName) {
                     return DropdownMenuItem<String>(
                       value: itemName,
@@ -116,69 +116,82 @@ class _RepostScreenState extends State<RepostScreen> {
                 ),
               ],
             ),
-           SizedBox(height: QSizes.spaceBtwSections,),
-          if(viewModel.itemsHistoryList.isNotEmpty)
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+            const SizedBox(
+              height: QSizes.spaceBtwSections,
             ),
-            elevation: 4,
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Department : ",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
+            if (viewModel.itemsHistoryList.isNotEmpty)
+              ListView.builder(
+                itemCount: viewModel.itemsHistoryList.length,
+                shrinkWrap: true,
+                // Adjust size based on the number of items
+                physics: const NeverScrollableScrollPhysics(),
+                // Prevents independent scrolling
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                itemBuilder: (context, index) {
+                  final item = viewModel.itemsHistoryList[index];
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: Container(
+                        height: 120, // Set a fixed height for all cards
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Department : ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .apply(color: !Get.isDarkMode?Colors.grey.shade700:Colors.white)!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  item['departmentName'].toString(),
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 20, color: Colors.grey),
+                            Row(
+                              children: [
+                                Text(
+                                  "Count: ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .apply(color: !Get.isDarkMode?Colors.grey.shade700:Colors.white)!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  item['count'].toString(),
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        viewModel.itemsHistoryList[0]['departmentName'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
+                    );
+                },
+              )
+            else
+              Center(
+                child: Text(
+                  "No data available",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
                   ),
-
-                  const Divider(height: 20, color: Colors.grey),
-                  Row(
-                    children: [
-                      Text(
-                        "Count : ",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        viewModel.itemsHistoryList[0]['count'].toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          )
-
-
+                ),
+              )
           ],
         ),
       ),

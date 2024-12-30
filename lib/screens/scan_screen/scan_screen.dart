@@ -52,10 +52,10 @@ class _ScanScreenState extends State<ScanScreen> {
               // User Profile and Welcome Text
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: QColors.secondary),
-                  ),
+                  // CircleAvatar(
+                  //   backgroundColor: Colors.white,
+                  //   child: Icon(Icons.person, color: QColors.secondary),
+                  // ),
                   const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,8 +64,8 @@ class _ScanScreenState extends State<ScanScreen> {
                         "Welcome",
                         style: Theme.of(context)
                             .textTheme
-                            .titleLarge!
-                            .apply(color: QColors.white),
+                            .headlineSmall!
+                            .apply(color: QColors.white).copyWith(letterSpacing: 3),
                       ),
                       Text(
                         widget.userName,
@@ -79,13 +79,29 @@ class _ScanScreenState extends State<ScanScreen> {
                 ],
               ),
               // Actions (e.g., settings icon)
-              IconButton(
-                icon: const Icon(Icons.logout),
-                color: QColors.white,
-                onPressed: () {
-                  Get.offAll(() => const LoginScreen());
-                  QStorage.clearStorage();
-                },
+              Row(
+                children: [
+                  Tooltip(
+                    message: "Report",
+                    child: IconButton(
+                      icon: const Icon(Icons.report),
+                      color: QColors.white,
+                      onPressed: () {
+                         Get.to(() => RepostScreen());
+                          viewModel.getitems();
+
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    color: QColors.white,
+                    onPressed: () {
+                      Get.offAll(() => const LoginScreen());
+                      QStorage.clearStorage();
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -98,74 +114,13 @@ class _ScanScreenState extends State<ScanScreen> {
           //     ),
           //   ),
           // ),
-          leading: IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              Get.to(() => RepostScreen());
-              viewModel.getitems();
-            },
-          ),
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: QColors.secondary,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.person, color: QColors.secondary),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      widget.userName,
-                      style: const TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                    Text(
-                      widget.userId,
-                      style: const TextStyle(fontSize: 14, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.dashboard),
-                title: const Text("Dashboard"),
-                onTap: () {
-                  // Navigate to dashboard
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.qr_code_scanner),
-                title: const Text("Scan"),
-                onTap: () {
-                  // Close drawer and stay on the scan screen
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text("Settings"),
-                onTap: () {
-                  // Navigate to settings screen
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text("Logout"),
-                onTap: () {
-                  Get.offAll(() => const LoginScreen());
-                  QStorage.clearStorage();
-                },
-              ),
-            ],
-          ),
+          // leading: IconButton(
+          //   icon: const Icon(Icons.menu),
+          //   onPressed: () {
+          //     Get.to(() => RepostScreen());
+          //     viewModel.getitems();
+          //   },
+          // ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(QSizes.defaultSpace),
@@ -320,38 +275,94 @@ class _ScanScreenState extends State<ScanScreen> {
                     return Stack(
                       children: [
                         Card(
-                          color: Colors.blue.shade50,
-                          child: Center(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 4,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          child: Container(
+                            height: 120, // Set a fixed height for all cards
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  item['itemBarCode'].toString(),
-                                  style: const TextStyle(fontSize: 16),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "BarCode : ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .apply(
+                                              color: !Get.isDarkMode
+                                                  ? Colors.grey.shade700
+                                                  : Colors.white)!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      item['itemBarCode'].toString(),
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  item['itemName'].toString(),
-                                  style: const TextStyle(fontSize: 16),
+                                const Divider(height: 20, color: Colors.grey),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "itemName: ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .apply(
+                                              color: !Get.isDarkMode
+                                                  ? Colors.grey.shade700
+                                                  : Colors.white)!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      item['itemName'].toString(),
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: QColors.accent,
-                              borderRadius: BorderRadius.circular(
-                                  10), // Adjust border radius
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                '${index + 1}',
-                                style: const TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                              ),
+                        // Card(
+                        //   color: Colors.blue.shade50,
+                        //   child: Center(
+                        //     child: Column(
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //       children: [
+                        //         Text(
+                        //           item['itemBarCode'].toString(),
+                        //           style: const TextStyle(fontSize: 16),
+                        //         ),
+                        //         Text(
+                        //           item['itemName'].toString(),
+                        //           style: const TextStyle(fontSize: 16),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: QColors.accent,
+                            borderRadius: BorderRadius.circular(
+                                10), // Adjust border radius
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(
+                              '${index + 1}',
+                              style: const TextStyle(
+                                  fontSize: 16, color: Colors.white),
                             ),
                           ),
                         ),
@@ -370,7 +381,7 @@ class _ScanScreenState extends State<ScanScreen> {
                   }).toList(),
                   options: CarouselOptions(
                     height: 120,
-                    enableInfiniteScroll: true,
+                    enableInfiniteScroll: false,
                     enlargeCenterPage: true,
                     viewportFraction: 0.8,
                     onPageChanged: (index, _) =>
@@ -404,13 +415,13 @@ class _ScanScreenState extends State<ScanScreen> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // Save data logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Data saved successfully!"),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
+                  viewModel.postApi();
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   const SnackBar(
+                  //     content: Text("Data saved successfully!"),
+                  //     backgroundColor: Colors.green,
+                  //   ),
+                  // );
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),

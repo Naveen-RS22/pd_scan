@@ -32,7 +32,10 @@ class ScanScreenViewModel extends ChangeNotifier {
       'https://app.flowforceengineering.com/api/BarCodeHeadApi/GetItems';
   String getAllReportItemHistory =
       'https://app.flowforceengineering.com/api/BarCodeHeadApi/GetItemHistory/';
+  String postUrl =
+      'https://app.flowforceengineering.com/api/BarCodeHeadApi/CreateBarCodeScanDetails';
   String username = '';
+  String userID = '';
   List<dynamic> departmentsList = [];
   List<dynamic> itemsList = [];
   List<dynamic> itemsHistoryList = [];
@@ -48,6 +51,9 @@ class ScanScreenViewModel extends ChangeNotifier {
     isScan = false;
     postList = [];
     username = user;
+    userID = userId;
+    print('userID');
+    print(userID);
     getDepartment(userId);
     // username = await QStorage().getString('userName');
     // usercode = await QStorage().getString('userCode');
@@ -155,11 +161,11 @@ class ScanScreenViewModel extends ChangeNotifier {
 
   Future<void> getitems() async {
     final url = '$getAllReportItemsUrl';
-    itemsList=[];
-    items=[];
-    selecteditemId=null;
-    selecteditem=null;
-    itemsHistoryList=[];
+    itemsList = [];
+    items = [];
+    selecteditemId = null;
+    selecteditem = null;
+    itemsHistoryList = [];
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -257,12 +263,115 @@ class ScanScreenViewModel extends ChangeNotifier {
     }
   }
 
-  setDepartment(String val) {
-    departmentsList.map((e) {
-      if (e['departmentName'] == val) {
-        selectedDepartmentId = e['departmentId'];
+  Future<void> postApi() async {
+    final url = '$postUrl';
+    if (postList.isEmpty) {
+      Get.snackbar(
+        'No data',
+        'No items added',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: QColors.background2,
+        colorText: Colors.black,
+        duration: const Duration(seconds: 3),
+      );
+    } else {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(postList),
+      );
+
+      if (response.statusCode == 307) {
+        print("object");
+        final redirectUrl = response.headers['location'];
+        print(redirectUrl);
+        if (redirectUrl != null) {
+          final newResponse = await http.post(
+            Uri.parse(redirectUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(postList),
+          );
+          if (newResponse.statusCode == 200) {
+            // CircularProgressIndicator();
+            Qrdata = {};
+            scannedItems = [];
+            isScan = false;
+            postList = [];
+notifyListeners();
+            Get.snackbar(
+              'Saved',
+              'Data Saved successfully',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+              duration: const Duration(seconds: 3),
+            );
+          }
+        }
       }
-    });
+    }
+  }
+
+  // Future<void> postApi() async {
+  //   final url = '$postUrl';
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode(postList)
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //
+  //       notifyListeners();
+  //       // Handle success
+  //       // Get.snackbar(
+  //       //   'Login Success',
+  //       //   'Welcome ${data['data']['userName']}',
+  //       //   snackPosition: SnackPosition.BOTTOM,
+  //       //   backgroundColor: Colors.green,
+  //       //   colorText: Colors.white,
+  //       //   duration: const Duration(seconds: 3),
+  //       // );
+  //     } else {
+  //       // Handle server error
+  //       Get.snackbar(
+  //         'Login Error',
+  //         'Failed with status: ${response.statusCode}',
+  //         snackPosition: SnackPosition.BOTTOM,
+  //         backgroundColor: Colors.red,
+  //         colorText: Colors.white,
+  //         duration: const Duration(seconds: 3),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     // Handle connection error
+  //     Get.snackbar(
+  //       'Login Error',
+  //       'Something went wrong: $e',
+  //       snackPosition: SnackPosition.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       colorText: Colors.white,
+  //       duration: const Duration(seconds: 3),
+  //     );
+  //   }
+  // }
+
+  setDepartment(String val) {
+    for (int i = 0; i < departmentsList.length; i++) {
+      if (departmentsList[i]['departmentName'] == val) {
+        print("hi");
+        selectedDepartmentId = departmentsList[i]['departmentId'].toString();
+      }
+    }
+    // departmentsList.map((e) {
+    //   if (e['departmentName'] == val) {
+    //     selectedDepartmentId = e['departmentId'];
+    //   }
+    // });
+    print(selectedDepartmentId);
     selectedDepartment = val;
     notifyListeners();
   }
@@ -270,19 +379,19 @@ class ScanScreenViewModel extends ChangeNotifier {
   setItems(String val) {
     print("object");
     print(val);
-    for(int i=0;i<itemsList.length;i++){
+    for (int i = 0; i < itemsList.length; i++) {
       if (itemsList[i]['itemName'] == val) {
         print("hi");
-        selecteditemId =itemsList[i]['itemId'].toString() ;
+        selecteditemId = itemsList[i]['itemId'].toString();
       }
     }
-    itemsList.map((e) {
-      print(e['itemName']);
-      if (e['itemName'] == val) {
-        print("hi");
-        selecteditemId = e['itemId'].toString();
-      }
-    });
+    // itemsList.map((e) {
+    //   print(e['itemName']);
+    //   if (e['itemName'] == val) {
+    //     print("hi");
+    //     selecteditemId = e['itemId'].toString();
+    //   }
+    // });
     selecteditem = val;
     print('selecteditemIdselecteditemId');
     print(selecteditemId);
@@ -323,7 +432,8 @@ class ScanScreenViewModel extends ChangeNotifier {
     if (!postList.any(
         (element) => element['barCodeDetailId'] == Qrdata['barCodeDetailId'])) {
       postList.add({
-        "id": postList.length, // Assign a unique ID based on the list length
+        "id": postList.length,
+        // Assign a unique ID based on the list length
         "barCodeDetailId": Qrdata['barCodeDetailId'],
         "barCodeHeadId": Qrdata['barCodeHeadId'],
         "itemId": Qrdata['itemId'],
@@ -331,8 +441,9 @@ class ScanScreenViewModel extends ChangeNotifier {
         "itemCode": Qrdata['itemCode'],
         "itemBarCode": Qrdata['itemBarCode'],
         "departmentID": selectedDepartmentId,
-        "createdBy": username,
-        "CreatedDate": DateTime.now().toString(), // Convert DateTime to string
+        "createdBy": int.parse(userID),
+        "CreatedDate": DateTime.now().toString().split(' ')[0],
+        // Convert DateTime to string
       });
       print("Post added successfully.");
     } else {
