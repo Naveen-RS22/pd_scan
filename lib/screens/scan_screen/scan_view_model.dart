@@ -27,7 +27,7 @@ class ScanScreenViewModel extends ChangeNotifier {
   String departmentUrl =
       'https://app.flowforceengineering.com/api/BarCodeHeadApi/GetDepartmentByUser/';
   String barCodeUrl =
-      'https://app.flowforceengineering.com/api/BarCodeHeadApi/GetBarCodedetail/';
+      'https://app.flowforceengineering.com/api/BarCodeHeadApi/GetBarCodedetailwithValid/';
   String getAllReportItemsUrl =
       'https://app.flowforceengineering.com/api/BarCodeHeadApi/GetItems';
   String getAllReportItemHistory =
@@ -111,7 +111,7 @@ class ScanScreenViewModel extends ChangeNotifier {
   }
 
   Future<void> getQRDetail(String barCodeId) async {
-    final url = '$barCodeUrl$barCodeId';
+    final url = '$barCodeUrl$selectedDepartmentId/$barCodeId';
 
     try {
       final response = await http.get(
@@ -121,10 +121,46 @@ class ScanScreenViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        isScan = false;
-        Qrdata = data['data'];
-        print("Qrdata");
-        print(Qrdata);
+        if (data != null) {
+          if (data['msg'] == 'Success') {
+            isScan = false;
+            Qrdata = data['data'];
+            print("Qrdata");
+            print(Qrdata);
+          } else if (data['msg'] == 'Already Scanned') {
+            Qrdata = {};
+            isScan = false;
+            Get.snackbar(
+              'Already Scanned',
+              '',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: QColors.background2,
+              colorText: Colors.black,
+              duration: const Duration(seconds: 3),
+            );
+          } else if (data['msg'] == 'InValid') {
+            Qrdata = {};
+            isScan = false;
+            Get.snackbar(
+              'Invalid',
+              '',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: QColors.background2,
+              colorText: Colors.black,
+              duration: const Duration(seconds: 3),
+            );
+          }
+        } else {
+          Get.snackbar(
+            'Invalid BarCode',
+            '',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+        }
+
         notifyListeners();
         // Handle success
         // Get.snackbar(
@@ -148,14 +184,14 @@ class ScanScreenViewModel extends ChangeNotifier {
       }
     } catch (e) {
       // Handle connection error
-      Get.snackbar(
-        'Login Error',
-        'Something went wrong: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      // Get.snackbar(
+      //   'Login Error',
+      //   'Something went wrong: $e',
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   backgroundColor: Colors.red,
+      //   colorText: Colors.white,
+      //   duration: const Duration(seconds: 3),
+      // );
     }
   }
 
@@ -260,55 +296,6 @@ class ScanScreenViewModel extends ChangeNotifier {
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
-    }
-  }
-
-  Future<void> postApi() async {
-    final url = '$postUrl';
-    if (postList.isEmpty) {
-      Get.snackbar(
-        'No data',
-        'No items added',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: QColors.background2,
-        colorText: Colors.black,
-        duration: const Duration(seconds: 3),
-      );
-    } else {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(postList),
-      );
-
-      if (response.statusCode == 307) {
-        print("object");
-        final redirectUrl = response.headers['location'];
-        print(redirectUrl);
-        if (redirectUrl != null) {
-          final newResponse = await http.post(
-            Uri.parse(redirectUrl),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode(postList),
-          );
-          if (newResponse.statusCode == 200) {
-            // CircularProgressIndicator();
-            Qrdata = {};
-            scannedItems = [];
-            isScan = false;
-            postList = [];
-notifyListeners();
-            Get.snackbar(
-              'Saved',
-              'Data Saved successfully',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              duration: const Duration(seconds: 3),
-            );
-          }
-        }
-      }
     }
   }
 
@@ -478,5 +465,114 @@ notifyListeners();
     Qrdata = {};
     isScan = true;
     notifyListeners();
+  }
+
+  Future<void> postApi() async {
+    final url = '$postUrl';
+
+    // Check if the list is empty
+    if (postList.isEmpty) {
+      Get.snackbar(
+        'No data',
+        'No items added',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: QColors.background2,
+        colorText: Colors.black,
+        duration: const Duration(seconds: 3),
+      );
+    } else {
+      try {
+        // Perform the first HTTP request
+        final response = await http.post(
+          Uri.parse(url),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(postList),
+        );
+
+        if (response.statusCode == 200) {
+          // Success
+          Qrdata = {};
+          scannedItems = [];
+          isScan = false;
+          postList = [];
+          notifyListeners();
+          Get.snackbar(
+            'Saved',
+            'Data saved successfully',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+        } else if (response.statusCode == 307) {
+          // Handle redirect (307 status code)
+          final redirectUrl = response.headers['location'];
+          if (redirectUrl != null) {
+            final newResponse = await http.post(
+              Uri.parse(redirectUrl),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(postList),
+            );
+            if (newResponse.statusCode == 200) {
+              // Success on the redirected request
+              Qrdata = {};
+              scannedItems = [];
+              isScan = false;
+              postList = [];
+              notifyListeners();
+              Get.snackbar(
+                'Saved',
+                'Data saved successfully after redirect',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+                duration: const Duration(seconds: 3),
+              );
+            } else {
+              // Handle failed redirected request
+              Get.snackbar(
+                'Error',
+                'Failed to save data after redirect. Status code: ${newResponse.statusCode}',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+                duration: const Duration(seconds: 3),
+              );
+            }
+          } else {
+            // If no redirect URL is found
+            Get.snackbar(
+              'Error',
+              'Redirect URL not found',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              duration: const Duration(seconds: 3),
+            );
+          }
+        } else {
+          // Handle other response statuses
+          Get.snackbar(
+            'Error',
+            'Failed to save data. Status code: ${response.statusCode}',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+        }
+      } catch (e) {
+        // Catch any exceptions (network issues, JSON parsing issues, etc.)
+        print("Error: $e");
+        Get.snackbar(
+          'Error',
+          'Something went wrong: $e',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    }
   }
 }

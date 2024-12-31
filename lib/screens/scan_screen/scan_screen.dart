@@ -178,7 +178,10 @@ class _ScanScreenState extends State<ScanScreen> {
                         setState(() {
                           viewModel.setBarCode(scanData.code!);
                         });
+                        controller.stopCamera();
+
                       });
+
                     },
                     overlay: QrScannerOverlayShape(
                       borderColor: Colors.red,

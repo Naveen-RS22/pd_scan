@@ -40,7 +40,7 @@ class _LoginFormState extends State<LoginForm> {
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(
               prefixIcon: Icon(Iconsax.direct_right),
-              labelText: 'E-mail',
+              labelText: 'Username',
             ),
             // validator: (value) {
             //   if (value == null || value.isEmpty) {

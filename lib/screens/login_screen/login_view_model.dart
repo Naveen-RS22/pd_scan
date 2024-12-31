@@ -41,6 +41,8 @@ class LoginViewModel extends ChangeNotifier {
           colorText: Colors.white,
           duration: const Duration(seconds: 3),
         );
+        emailController.clear();
+        passwordController.clear();
         Get.to(() =>  ScanScreen(userId: data['data']['userId'].toString(),userName:data['data']['userName'].toString()));
       } else {
         // Handle server error
