@@ -419,7 +419,7 @@ class ScanScreenViewModel extends ChangeNotifier {
     if (!postList.any(
         (element) => element['barCodeDetailId'] == Qrdata['barCodeDetailId'])) {
       postList.add({
-        "id": postList.length,
+        "id": 0,
         // Assign a unique ID based on the list length
         "barCodeDetailId": Qrdata['barCodeDetailId'],
         "barCodeHeadId": Qrdata['barCodeHeadId'],
@@ -429,7 +429,8 @@ class ScanScreenViewModel extends ChangeNotifier {
         "itemBarCode": Qrdata['itemBarCode'],
         "departmentID": selectedDepartmentId,
         "createdBy": int.parse(userID),
-        "CreatedDate": DateTime.now().toString().split(' ')[0],
+        "CreatedDate": DateTime.now().toIso8601String(),
+        // "CreatedDate": DateTime.now().toString().split(' ')[0],
         // Convert DateTime to string
       });
       print("Post added successfully.");

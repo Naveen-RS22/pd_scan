@@ -126,19 +126,19 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: QSizes.spaceBtwItems),
 
           // Create Account Button
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () => Get.to(() => null),
-              child: Text(
-                'Create account',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    ,
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   width: double.infinity,
+          //   child: OutlinedButton(
+          //     onPressed: () => Get.to(() => null),
+          //     child: Text(
+          //       'Create account',
+          //       style: Theme.of(context)
+          //           .textTheme
+          //           .bodySmall!
+          //           ,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
