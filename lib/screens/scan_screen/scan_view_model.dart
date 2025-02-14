@@ -126,7 +126,29 @@ class ScanScreenViewModel extends ChangeNotifier {
             isScan = false;
             Qrdata = data['data'];
             print("Qrdata");
-            print(Qrdata);
+            print(Qrdata); print("postList");
+            print(postList);
+            bool isDuplicate = postList.any(
+                  (element) => element['itemBarCode'] == Qrdata['itemBarCode'],
+            );
+
+            if (isDuplicate) {
+              Get.snackbar(
+                'Failed',
+                'Duplicate entry detected',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: QColors.background2,
+                colorText: Colors.black,
+                duration: const Duration(seconds: 3),
+              );
+              Qrdata = {};
+              isScan = false;
+              print("Item already exists in the post list.");
+            } else {
+              print("e post list.");
+
+            }
+
           } else if (data['msg'] == 'Already Scanned') {
             Qrdata = {};
             isScan = false;
@@ -434,15 +456,27 @@ class ScanScreenViewModel extends ChangeNotifier {
         // Convert DateTime to string
       });
       print("Post added successfully.");
+      Get.snackbar(
+        'Success.',
+        'Added successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: QColors.success,
+        colorText: Colors.black,
+        duration: const Duration(seconds: 3),
+      );
+      Qrdata = {};
+      isScan = true;
     } else {
       Get.snackbar(
         'Item Not added.',
         'Duplicate entry detected',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: QColors.background2,
-        colorText: Colors.black,
+        colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
+      Qrdata = {};
+      isScan = true;
       print("Duplicate entry detected. Post not added.");
     }
 

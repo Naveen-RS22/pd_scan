@@ -65,7 +65,8 @@ class _ScanScreenState extends State<ScanScreen> {
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall!
-                            .apply(color: QColors.white).copyWith(letterSpacing: 3),
+                            .apply(color: QColors.white)
+                            .copyWith(letterSpacing: 3),
                       ),
                       Text(
                         widget.userName,
@@ -87,9 +88,8 @@ class _ScanScreenState extends State<ScanScreen> {
                       icon: const Icon(Icons.report),
                       color: QColors.white,
                       onPressed: () {
-                         Get.to(() => RepostScreen());
-                          viewModel.getitems();
-
+                        Get.to(() => RepostScreen());
+                        viewModel.getitems();
                       },
                     ),
                   ),
@@ -179,9 +179,7 @@ class _ScanScreenState extends State<ScanScreen> {
                           viewModel.setBarCode(scanData.code!);
                         });
                         controller.stopCamera();
-
                       });
-
                     },
                     overlay: QrScannerOverlayShape(
                       borderColor: Colors.red,
@@ -269,173 +267,252 @@ class _ScanScreenState extends State<ScanScreen> {
                   ],
                 ),
               const SizedBox(height: QSizes.spaceBtwSections),
-              Expanded(
-                child: CarouselSlider(
-                  items: viewModel.postList.asMap().entries.map((entry) {
-                    int index = entry.key; // Get the index
-                    Map<String, dynamic> item = entry.value; // Get the item
-
-                    return Stack(
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 4,
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          child: Container(
-                            height: 120, // Set a fixed height for all cards
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "BarCode : ",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall!
-                                          .apply(
-                                              color: !Get.isDarkMode
-                                                  ? Colors.grey.shade700
-                                                  : Colors.white)!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      item['itemBarCode'].toString(),
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                  ],
-                                ),
-                                const Divider(height: 20, color: Colors.grey),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "itemName: ",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall!
-                                          .apply(
-                                              color: !Get.isDarkMode
-                                                  ? Colors.grey.shade700
-                                                  : Colors.white)!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      item['itemName'].toString(),
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Card(
-                        //   color: Colors.blue.shade50,
-                        //   child: Center(
-                        //     child: Column(
-                        //       mainAxisAlignment: MainAxisAlignment.center,
-                        //       children: [
-                        //         Text(
-                        //           item['itemBarCode'].toString(),
-                        //           style: const TextStyle(fontSize: 16),
-                        //         ),
-                        //         Text(
-                        //           item['itemName'].toString(),
-                        //           style: const TextStyle(fontSize: 16),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: QColors.accent,
-                            borderRadius: BorderRadius.circular(
-                                10), // Adjust border radius
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Text(
-                              '${index + 1}',
-                              style: const TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          child: IconButton(
-                            onPressed: () {
-                              viewModel.removeList(
-                                  index); // Pass the index to remove the item
-                            },
-                            icon: const Icon(Icons.cancel),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                  options: CarouselOptions(
-                    height: 120,
-                    enableInfiniteScroll: false,
-                    enlargeCenterPage: true,
-                    viewportFraction: 0.8,
-                    onPageChanged: (index, _) =>
-                        viewModel.updatePageIndicator(index),
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: CarouselSlider(
+              //     items: viewModel.postList.asMap().entries.map((entry) {
+              //       int index = entry.key; // Get the index
+              //       Map<String, dynamic> item = entry.value; // Get the item
+              //
+              //       return Stack(
+              //         children: [
+              //           Card(
+              //             shape: RoundedRectangleBorder(
+              //               borderRadius: BorderRadius.circular(10),
+              //             ),
+              //             elevation: 4,
+              //             margin: const EdgeInsets.symmetric(vertical: 8),
+              //             child: Container(
+              //               height: 120, // Set a fixed height for all cards
+              //               padding: const EdgeInsets.all(16.0),
+              //               child: Column(
+              //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //                 children: [
+              //                   Row(
+              //                     children: [
+              //                       Text(
+              //                         "BarCode : ",
+              //                         style: Theme.of(context)
+              //                             .textTheme
+              //                             .titleSmall!
+              //                             .apply(
+              //                                 color: !Get.isDarkMode
+              //                                     ? Colors.grey.shade700
+              //                                     : Colors.white)!
+              //                             .copyWith(
+              //                                 fontWeight: FontWeight.bold),
+              //                       ),
+              //                       Text(
+              //                         item['itemBarCode'].toString(),
+              //                         style:
+              //                             Theme.of(context).textTheme.bodyLarge,
+              //                       ),
+              //                     ],
+              //                   ),
+              //                   const Divider(height: 20, color: Colors.grey),
+              //                   Row(
+              //                     children: [
+              //                       Text(
+              //                         "itemName: ",
+              //                         style: Theme.of(context)
+              //                             .textTheme
+              //                             .titleSmall!
+              //                             .apply(
+              //                                 color: !Get.isDarkMode
+              //                                     ? Colors.grey.shade700
+              //                                     : Colors.white)!
+              //                             .copyWith(
+              //                                 fontWeight: FontWeight.bold),
+              //                       ),
+              //                       Text(
+              //                         item['itemName'].toString(),
+              //                         style:
+              //                             Theme.of(context).textTheme.bodyLarge,
+              //                       ),
+              //                     ],
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //           // Card(
+              //           //   color: Colors.blue.shade50,
+              //           //   child: Center(
+              //           //     child: Column(
+              //           //       mainAxisAlignment: MainAxisAlignment.center,
+              //           //       children: [
+              //           //         Text(
+              //           //           item['itemBarCode'].toString(),
+              //           //           style: const TextStyle(fontSize: 16),
+              //           //         ),
+              //           //         Text(
+              //           //           item['itemName'].toString(),
+              //           //           style: const TextStyle(fontSize: 16),
+              //           //         ),
+              //           //       ],
+              //           //     ),
+              //           //   ),
+              //           // ),
+              //           Container(
+              //             decoration: BoxDecoration(
+              //               color: QColors.accent,
+              //               borderRadius: BorderRadius.circular(
+              //                   10), // Adjust border radius
+              //             ),
+              //             child: Padding(
+              //               padding: const EdgeInsets.all(4.0),
+              //               child: Text(
+              //                 '${index + 1}',
+              //                 style: const TextStyle(
+              //                     fontSize: 16, color: Colors.white),
+              //               ),
+              //             ),
+              //           ),
+              //           Positioned(
+              //             right: 0,
+              //             child: IconButton(
+              //               onPressed: () {
+              //                 viewModel.removeList(
+              //                     index); // Pass the index to remove the item
+              //               },
+              //               icon: const Icon(Icons.cancel),
+              //             ),
+              //           ),
+              //         ],
+              //       );
+              //     }).toList(),
+              //     options: CarouselOptions(
+              //       height: 120,
+              //       enableInfiniteScroll: false,
+              //       enlargeCenterPage: true,
+              //       viewportFraction: 0.8,
+              //       onPageChanged: (index, _) =>
+              //           viewModel.updatePageIndicator(index),
+              //     ),
+              //   ),
+              // ),
+              // if (viewModel.postList.isNotEmpty)
+              //   Center(
+              //     child: Obx(
+              //       () => SingleChildScrollView(
+              //         scrollDirection: Axis.horizontal,
+              //         child: Row(
+              //           mainAxisSize: MainAxisSize.min,
+              //           children: [
+              //             for (int i = 0; i < viewModel.postList.length; i++)
+              //               Container(
+              //                 height: 4,
+              //                 width: 20,
+              //                 color: viewModel.carousalCurrentIndex.value == i
+              //                     ? QColors.secondary
+              //                     : QColors.grey,
+              //                 margin: EdgeInsets.only(right: 10),
+              //               ),
+              //           ],
+              //         ),
+              //       ),
+              //     ),
+              //   ),
               if (viewModel.postList.isNotEmpty)
-                Center(
-                  child: Obx(
-                    () => SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          for (int i = 0; i < viewModel.postList.length; i++)
-                            Container(
-                              height: 4,
-                              width: 20,
-                              color: viewModel.carousalCurrentIndex.value == i
-                                  ? QColors.secondary
-                                  : QColors.grey,
-                              margin: EdgeInsets.only(right: 10),
+                Expanded(
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    child: ListView.builder(
+                      itemCount: viewModel.postList.length,
+                      itemBuilder: (context, index) {
+                        final item = viewModel.postList[index];
+                        return Stack(
+                          children: [
+                            Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 4,
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              child: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "BarCode: ",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .apply(
+                                                  color: Colors.grey.shade700)
+                                              .copyWith(
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          item['itemBarCode'].toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                      ],
+                                    ),
+                                    const Divider(
+                                        height: 20, color: Colors.grey),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "ItemName: ",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .apply(
+                                                  color: Colors.grey.shade700)
+                                              .copyWith(
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          item['itemName'].toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                        ],
-                      ),
+                            Positioned(
+                              right: 0,
+                              child: IconButton(
+                                onPressed: () {
+                                  viewModel.removeList(index);
+                                },
+                                icon: const Icon(Icons.cancel),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ),
 
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  viewModel.postApi();
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   const SnackBar(
-                  //     content: Text("Data saved successfully!"),
-                  //     backgroundColor: Colors.green,
-                  //   ),
-                  // );
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: QColors.primary,
-                ),
-                child: const Text(
-                  "Save Data",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
             ],
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: ElevatedButton(
+            onPressed: () {
+              viewModel.postApi();
+            },
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+              backgroundColor: QColors.primary,
+            ),
+            child: Text(
+              "Save Data ${viewModel.postList.isNotEmpty ? '(${viewModel.postList.length})' : ''}",
+              style: TextStyle(fontSize: 18),
+            ),
           ),
         ),
       ),
