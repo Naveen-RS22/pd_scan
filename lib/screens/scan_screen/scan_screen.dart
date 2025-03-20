@@ -233,22 +233,35 @@ class _ScanScreenState extends State<ScanScreen> {
               // ),
               // const SizedBox(height: QSizes.spaceBtwSections),
               if (viewModel.Qrdata.isNotEmpty)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: [
-                        Text(
-                          viewModel.Qrdata['itemBarCode'].toString(),
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        Text(
-                          viewModel.Qrdata['itemName'].toString(),
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      ],
-                    ),
-                    ElevatedButton(
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            viewModel.Qrdata['itemBarCode'].toString(),
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          Text(
+                            viewModel.Qrdata['itemName'].toString(),
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ],
+                      ),
+
+                    ],
+                  ),
+                ),
+              const SizedBox(height: QSizes.spaceBtwSections),
+              if (viewModel.Qrdata.isNotEmpty)
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
                       onPressed: () {
                         viewModel.addPost();
                       },
@@ -256,7 +269,10 @@ class _ScanScreenState extends State<ScanScreen> {
                           backgroundColor: QColors.secondary),
                       child: const Text("Add"),
                     ),
-                    ElevatedButton(
+                  ),
+                  SizedBox(width: 30,),
+                  Expanded(
+                    child: ElevatedButton(
                       onPressed: () {
                         viewModel.clear();
                       },
@@ -264,8 +280,10 @@ class _ScanScreenState extends State<ScanScreen> {
                           backgroundColor: QColors.secondary),
                       child: const Text("Clear"),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+
               const SizedBox(height: QSizes.spaceBtwSections),
               // Expanded(
               //   child: CarouselSlider(
@@ -445,11 +463,14 @@ class _ScanScreenState extends State<ScanScreen> {
                                               .copyWith(
                                                   fontWeight: FontWeight.bold),
                                         ),
-                                        Text(
-                                          item['itemBarCode'].toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge,
+                                        Expanded( // Prevents overflow
+                                          child: Text(
+                                            item['itemBarCode'].toString(),
+                                            overflow: TextOverflow.ellipsis, // Adds "..." when text overflows
+                                            maxLines: 1, // Keeps it in one line
+                                            softWrap: false,
+                                            style: Theme.of(context).textTheme.bodyLarge,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -467,11 +488,14 @@ class _ScanScreenState extends State<ScanScreen> {
                                               .copyWith(
                                                   fontWeight: FontWeight.bold),
                                         ),
-                                        Text(
-                                          item['itemName'].toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge,
+                                        Expanded( // Prevents overflow
+                                          child: Text(
+                                            item['itemName'].toString(),
+                                            overflow: TextOverflow.ellipsis, // Adds "..." when text overflows
+                                            maxLines: 1, // Keeps it in one line
+                                            softWrap: false,
+                                            style: Theme.of(context).textTheme.bodyLarge,
+                                          ),
                                         ),
                                       ],
                                     ),
